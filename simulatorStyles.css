@@ -1,0 +1,45 @@
+body {
+	background-color:mediumseagreen;
+}
+#header {
+	background-color:#5b9bd5;
+	border:2px solid rgb(65,113,156);
+	height:70px;
+	width:1015px;
+	margin:8px auto;
+	text-align:center;	
+	color:white;
+}
+#simWindow {
+	width:752px;
+	height:752px;
+	border:2px solid rgb(65,113,156);
+	margin-right:3px;
+}
+#optionsPanel {
+	background-color:#5b9bd5;
+	border:2px solid rgb(65,113,156);
+	text-align:center;
+	height: 750px;
+	width: 250px;
+	margin-left:3px;
+	color:white;
+}
+#footer {
+	background-color:#5b9bd5;
+	border:2px solid rgb(65,113,156);
+	width:1015px;
+	height:70px;
+	margin:8px auto;
+	text-align:center;
+	color:white
+}
+canvas {
+	background-color:white;
+	border:1px solid black;
+} 
+table {
+	border-collapse:collapse;
+	margin: 8px auto;
+	padding:3px;
+}
