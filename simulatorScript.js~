@@ -1,11 +1,11 @@
-var ball = [];
+var balls = [];
 var i = 0; //number of balls
 var running = false; // simulation not running yet
 
 function start() {
-	ball[i] = new Ball();
+	balls[i] = new Ball();
     // Note: ball number counts from 0. i.e., first ball created is #0.
-	ball[i].drawIt();
+	balls[i].drawIt();
 	if(!running){
 		setInterval(function(){stepForward()}, (50/3));
 		running = true;
@@ -14,9 +14,10 @@ function start() {
 }
 function stepForward(){
 	ctx.clearRect(0,0,750,750);
-	for(j=0;j<=i;j++) {
-		ball[j].moveIt();
-		ball[j].drawIt();
+	for(j=0;j<i;j++) {
+		alert(balls.length);
+		balls[j].moveIt();
+		balls[j].drawIt();
 	}
 }
 function Ball(px, py, vx, vy, radius) {
