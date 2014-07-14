@@ -1,22 +1,30 @@
-var ball = [];
+var balls = [];
 var i = 0; //number of balls
 var running = false; // simulation not running yet
-
+var repeater = null; // Holds the interval object.
+var dt = 5;
 function start() {
-	ball[i] = new Ball();
+    balls[i] = new Ball();
     // Note: ball number counts from 0. i.e., first ball created is #0.
-	ball[i].drawIt();
+	balls[i].drawIt();
 	if(!running){
-		setInterval(function(){stepForward()}, (50/3));
+		repeater = setInterval(function(){stepForward()}, 50/3);
 		running = true;
 	}
 	i++;
 }
+
+function stop() {
+  clearInterval(repeater);
+  running = false;
+}
+
+
 function stepForward(){
 	ctx.clearRect(0,0,750,750);
 	for(j=0;j<i;j++) {
-		ball[j].moveIt();
-		ball[j].drawIt();
+		balls[j].moveIt();
+		balls[j].drawIt();
 	}
 }
 function Ball(px, py, vx, vy, radius) {
@@ -30,25 +38,28 @@ function Ball(px, py, vx, vy, radius) {
 	}
 	this.vx = vx;
 	if (typeof vx == 'undefined' || Math.abs(vx) <= .1) {
-		this.vx = Math.ceil(Math.random()*4);
+		this.vx = Math.ceil(Math.random()*4 -2);
+        if(this.vx==0) this.vx=1;
 	}
 	this.vy = vy;
 	if (typeof vy == 'undefined' || Math.abs(vy) <= .1) {
-		this.vy = Math.ceil(Math.random()*4);
+		this.vy = Math.ceil(Math.random()*4 -2);
+        if(this.vy==0) this.vy=1;
 	}
 	this.radius = radius;
 	if (typeof radius == 'undefined' || radius < 1) {
 		this.radius = 3;
 	}
+
 	this.moveIt = function() {
-		if ((px+radius) >= c.width || (px-radius) <= 0) vx = -vx; // Check if ball is at a wall
-		if ((py+radius) >= c.height || (py-radius) <= 0) vy = -vy;// and change direction if true
-		px += vx;
-		py += vy;
+		if ((this.px+this.radius) >= c.width || (this.px-this.radius) <= 0) this.vx = -this.vx; // Check if ball is at a wall
+		if ((this.py+this.radius) >= c.height || (this.py-this.radius) <= 0) this.vy = -this.vy;// and change direction if true
+		this.px += this.vx*dt;
+		this.py += this.vy*dt;
 	};
 	this.drawIt = function() {
 		ctx.beginPath();
-		ctx.arc(px,py,radius,0,2*Math.PI);
+		ctx.arc(this.px,this.py,this.radius,0,2*Math.PI);
 		ctx.fill();
 	};
 }
