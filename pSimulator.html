@@ -3,6 +3,7 @@
 <head>
 	<title>Bouncy Particle Fun</title>
 	<link rel="stylesheet" type="text/css" href="simulatorStyles.css" />
+	<script src="closure-library-master/closure/goog/base.js" type="text/javascript"></script>
 	<script src="simulatorScript.js" type="text/javascript"></script>
 </head>
 <body>
@@ -20,7 +21,8 @@
 			</td>
 			<td>
 				<div id="optionsPanel">
-					<button onClick="start();">Generate Particle</button> <br/>
+					<button onClick="start();">Generate One Particle</button> <br/>
+					<button onClick="generateBalls(50);">Generate 50 Particles</button> <br/>
 					<button onClick="reStart();">Start</button>
 					<button onClick="stop();">Stop</button> <br/>
 					<input id="energy" type="text"></input>
