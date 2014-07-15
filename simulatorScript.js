@@ -2,7 +2,7 @@ var balls = [];
 var i = 0; //number of balls
 var running = false; // simulation not running yet
 var repeater = null; // Holds the interval object.
-var dt = 1;
+var dt = 0.5;
 var mspf = 50/3; //milliseconds per frame
 function start() {
     balls[i] = new Ball();
@@ -14,14 +14,19 @@ function start() {
 	}
 	i++;
 }
-
 function stop() {
   clearInterval(repeater);
   running = false;
 }
-
+function reStart() {
+	if(!running) {
+		repeater = setInterval(function(){stepForward()}, mspf);
+		running = true;
+	}
+}
 
 function stepForward(){
+	document.getElementById("energy").value = calculateEnergy();
 	ctx.clearRect(0,0,750,750);
 	for(j=0;j<i;j++) {
 		balls[j].moveIt();
@@ -35,7 +40,7 @@ function stepForward(){
 		}
 	}
 }
-function Ball(px, py, vx, vy, radius, mass) {
+function Ball(px, py, vx, vy, radius, mass, color) {
 	this.px = px;
 	if (typeof px == 'undefined' || px <= 0) {
 		this.px = Math.round(Math.random()*740)+5;
@@ -62,6 +67,11 @@ function Ball(px, py, vx, vy, radius, mass) {
 	if (typeof mass == 'undefined' || mass <= 0) {
 		this.mass = 1;
 	}
+	this.color = color;
+	if (typeof color == 'undefined') {
+		this.color = "rgb("+Math.floor(Math.random()*256)+","+Math.floor(Math.random()*256)+","+Math.floor(Math.random()*256)+")";
+	}
+
 	this.moveIt = function() {
 		if ((this.px+this.radius) >= c.width || (this.px-this.radius) <= 0) this.vx = -this.vx; // Check if ball is at a wall
 		if ((this.py+this.radius) >= c.height || (this.py-this.radius) <= 0) this.vy = -this.vy;// and change direction if true
@@ -71,6 +81,7 @@ function Ball(px, py, vx, vy, radius, mass) {
 	this.drawIt = function() {
 		ctx.beginPath();
 		ctx.arc(this.px,this.py,this.radius,0,2*Math.PI);
+		ctx.fillStyle = this.color;
 		ctx.fill();
 	};
 	this.collide = function(that) {
@@ -92,4 +103,11 @@ function Ball(px, py, vx, vy, radius, mass) {
 		that.vx -= Fx / that.mass;
 		that.vy -= Fx / that.mass;
 	}
+}
+function calculateEnergy() {
+	var energy = 0;
+	for(j=0;j<i;j++) {
+		energy += 0.5 * balls[j].mass * (Math.pow(balls[j].vx, 2) + Math.pow(balls[j].vy, 2));
+	}
+	return energy;
 }

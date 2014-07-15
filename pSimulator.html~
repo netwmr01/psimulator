@@ -20,14 +20,15 @@
 			</td>
 			<td>
 				<div id="optionsPanel">
-					<button onClick="start()">Generate Particle</button>
-					<button onClick="stop = false">Stop</button>
+					<button onClick="start();">Generate Particle</button> <br/>
+					<button onClick="reStart();">Start</button>
+					<button onClick="stop();">Stop</button>
 				</div>
 			</td>
 		<tr>
 	</table>
 	<div id="footer">
-		Click <a href="http://wpi.edu/~mdpennington/index.html">here</a> to go home! <br />
+		Click <a href="http://wpi.edu/~mdpennington/index.html">here</a> to go home! <br/>
 	</div>
 </body>
 </html>
