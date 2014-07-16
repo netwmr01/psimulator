@@ -1,52 +1,108 @@
 goog.require('goog.structs.PriorityQueue');
-
 var balls = [];
 var i = 0; //number of balls
 var running = false; // simulation not running yet
 var repeater = null; // Holds the interval object.
-//var dt = 0.5;
+var hz = 0.5;
 var mspf = 50/3; //milliseconds per frame
-var pq = new goog.structs.PriorityQueue;
+var pq;
+var qCreated = false;
+var t = 0;
+var event1, event2, event3;
 function start() {
+	if(!running) {
+		//repeater = setInterval(function(){stepForward()}, mspf);
+		running = true;
+		if(!qCreated) { 
+			pq = new goog.structs.PriorityQueue();
+			qCreated = true;
+		}
+		mainLoop();
+	}
+}
+function mainLoop() {
+	var evt = new Event(0, null, null);
+	pq.enqueue(evt.time, evt);
+	while (!pq.isEmpty() && running) {
+		alert('inloop');
+		var e = pq.dequeue();
+		if (!e.isValid()) continue;
+		var a = e.a;
+		var b = e.b;
+
+		for (j=0;j<balls.length;j++) {
+			balls[j].moveIt(e.time-t);
+		}
+		t = e.time;
+		
+		if		(a != null && b != null) a.collide(b);
+		else if (a != null && b == null) a.collideWithVerticalWall();
+		else if (a == null && b != null) b.collideWithHorizontalWall();
+		else if (a == null && b == null) redraw();
+
+		predict(a);
+		predict(b);
+	}
+}
+function generateBall() {
     balls[i] = new Ball();
     // Note: ball number counts from 0. i.e., first ball created is #0.
 	balls[i].drawIt();
-	if(!running){
-		repeater = setInterval(function(){stepForward()}, mspf);
-		running = true;
+	if(!qCreated) { 
+			pq = new goog.structs.PriorityQueue();
+			qCreated = true;
 	}
+	predict(balls[i]);
 	i++;
 }
-function generateBalls(amount) {	
+function generateBalls(amount) {
+	if(!qCreated) { 
+			pq = new goog.structs.PriorityQueue();
+			qCreated = true;
+	}
 	for(i;i<amount;i++) {
 		balls[i] = new Ball();
+		balls[i].drawIt();
 	}
+	predictAll();
+	start();
 }
-function stop() {
-  clearInterval(repeater);
-  running = false;
-}
-function reStart() {
-	if(!running) {
-		repeater = setInterval(function(){stepForward()}, mspf);
-		running = true;
-	}
-}
-
-function stepForward(){
-	document.getElementById("energy").value = calculateEnergy();
-	ctx.clearRect(0,0,750,750);
+function predictAll() {
 	for(j=0;j<i;j++) {
-		balls[j].moveIt();
-		balls[j].drawIt();
 		if (balls.length > 1 ) {
 			for(k=(j+1);k<i;k++) {
-				if (Math.sqrt(Math.pow(balls[j].px-balls[k].px, 2)+Math.pow(balls[j].py-balls[k].py, 2)) <= (balls[j].radius+balls[k].radius)) {
-					balls[j].collide(balls[k]);
-				}
+				event3 = new Event(balls[j].timeToHitParticle(balls[k]), balls[j], balls[k]);
+				if (event3.isValid()) pq.enqueue(event3.time, event3);
 			}
 		}
+		event1 = new Event(balls[j].timeToHitVerticalWall(), balls[j], null);
+		event2 = new Event(balls[j].timeToHitHorizontalWall(), null, balls[j]);
+		pq.enqueue(event1.time, event1);
+		pq.enqueue(event2.time, event2);
 	}
+}
+function predict(a) {
+	if (a==null) return;
+	for(j=0;j<(balls.length-1);j++) {
+		event3 = new Event(a.timeToHitParticle(balls[j])+t, a, balls[j]);
+		if (event3.isValid()) pq.enqueue(event3.time, event3);
+	}
+	event1 = new Event(a.timeToHitVerticalWall()+t, a, null);
+	event2 = new Event(a.timeToHitHorizontalWall()+t, null, a);
+	pq.enqueue(event1.time, event1);
+	pq.enqueue(event2.time, event2);
+}
+function stop() {
+  //clearInterval(repeater);
+  running = false;
+}
+function redraw() {
+	ctx.clearRect(0,0,750,750);
+	for (j = 0; j < balls.length; j++) {
+		balls[j].drawIt();
+	}
+	var e = new Event(t + 1.0/hz, null, null);
+	pq.enqueue(e.time, e);
 }
 function Ball(px, py, vx, vy, radius, mass, color) {
 	this.px = px;
@@ -81,12 +137,9 @@ function Ball(px, py, vx, vy, radius, mass, color) {
 	}
 	this.count = 0;
 
-	this.moveIt = function() {
-		if ((this.px+this.radius) >= c.width || (this.px-this.radius) <= 0) {this.vx = -this.vx; this.count++;} // Check if ball is at a wall
-
-		if ((this.py+this.radius) >= c.height || (this.py-this.radius) <= 0) {this.vy = -this.vy; this.count++;} // and change direction if true
-		this.px += this.vx;
-		this.py += this.vy;
+	this.moveIt = function(dt) {
+		this.px += this.vx * dt;
+		this.py += this.vy * dt;
 	};
 	this.drawIt = function() {
 		ctx.beginPath();
@@ -115,6 +168,14 @@ function Ball(px, py, vx, vy, radius, mass, color) {
 
 		this.count++;
 		that.count++;
+	};
+	this.collideWithVerticalWall = function() {
+		this.vx = -this.vx;
+		this.count++;
+	};
+	this.collideWithHorizontalWall = function() {
+		this.vy = -this.vy;
+		this.count++;
 	};
 	this.timeToHitVerticalWall = function() {
 		if		(this.vx>0) return (c.width - this.px - this.radius) / this.vx;
@@ -150,16 +211,16 @@ function Event(time, a, b) {
 	this.b = b;
 	this.countA;
     this.countB;
-	if (typeof a != 'undefined') this.countA = a.count;
+	if (a != null) this.countA = a.count;
 	else		   this.countA = -1;
-	if (typeof b != 'undefined') this.countB = b.count;
+	if (b != null) this.countB = b.count;
 	else		   this.countB = -1;
 	
-	function isValid() {
-		if (typeof a != 'undefined' && a.count != this.countA) return false;
-		if (typeof b != 'undefined' && b.count != this.countB) return false;
+	this.isValid = function() {
+		if (a != null && a.count != this.countA) return false;
+		if (b != null && b.count != this.countB) return false;
 		return true;
-	}
+	};
 }
 function calculateEnergy() {
 	var energy = 0;
