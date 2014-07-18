@@ -73,8 +73,8 @@ function Ball(px, py, vx, vy, radius, mass, color) {
 
                 if( Math.abs(afterene
                      - ene) >0.5) 
-                     {console.log("energy changed"); console.log("before: "+ene+" after:"+afterene+" dvdp: "+dvdp+" dist: "+dist);
-                      console.log(this);console.log(that); console.log("dvx: "+dvx+" dvy: "+dvy); alert("energy changed");}
+                     {debuglog("energy changed"); debuglog("before: "+ene+" after:"+afterene+" dvdp: "+dvdp+" dist: "+dist);
+                      debuglog(this);debuglog(that); debuglog("dvx: "+dvx+" dvy: "+dvy); alert("energy changed");}
 
 		this.count++;
 		that.count++;
@@ -115,17 +115,17 @@ function Ball(px, py, vx, vy, radius, mass, color) {
 		var d = (dvdp*dvdp) - dvdv * (dpdp - sigma*sigma);
                 if (dpdp < sigma*sigma) 
                 {
-                    console.log("<overlapping particles>");
-                    console.log(a);
-                    console.log(b);
-                    console.log("<overlapping particles>");
+                    debuglog("<overlapping particles>");
+                    debuglog(a);
+                    debuglog(b);
+                    debuglog("<overlapping particles>");
 		}
                 if (d<0) return Number.POSITIVE_INFINITY;
                 var returnValue=-(dvdp + Math.sqrt(d)) / dvdv;
                 if(isNaN(returnValue)) 
                 {
-                    console.log ("dvdv:"+dvdv+" dvdp:"+dvdp+" d:"+d);
-                    console.log("time to Hit = NaN");
+                    debuglog ("dvdv:"+dvdv+" dvdp:"+dvdp+" d:"+d);
+                    debuglog("time to Hit = NaN");
                     returnValue=Number.POSITIVE_INFINITY;
                 }
 		return returnValue;

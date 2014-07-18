@@ -48,8 +48,8 @@ function Ball(px, py, vx, vy, radius, mass, color) {
 	this.collide = function(that) {
         
         var ene=0;
-        ene += 0.5 * this.mass * (this.vx *this.vx) + (this.vy*this.vy);
-        ene += 0.5 * that.mass * (that.vx *that.vx) + (that.vy*that.vy);
+        ene += 0.5 * this.mass * ((this.vx *this.vx) + (this.vy*this.vy));
+        ene += 0.5 * that.mass * ((that.vx *that.vx) + (that.vy*that.vy));
 
 		var dx = that.px - this.px;
 		var dy = that.py - this.py;
@@ -68,8 +68,8 @@ function Ball(px, py, vx, vy, radius, mass, color) {
 		this.vy += Fy / this.mass;
 		that.vx -= Fx / that.mass;
 		that.vy -= Fy / that.mass;
-                var afterene=0.5 * this.mass * (this.vx *this.vx) + (this.vy*this.vy)+
-                             0.5 * that.mass * (that.vx *that.vx) + (that.vy*that.vy);
+                var afterene=0.5 * this.mass * ((this.vx *this.vx) + (this.vy*this.vy))+
+                             0.5 * that.mass * ((that.vx *that.vx) + (that.vy*that.vy));
 
                 if( Math.abs(afterene
                      - ene) >0.5) 

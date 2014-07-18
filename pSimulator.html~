@@ -9,7 +9,7 @@
 </head>
 <body>
 	<div id="header">
-		<h1>Bouncy Particle Fun</h1>
+		<h1><b>Bouncy Particle Fun</b></h1>
 	</div>
 	<table id="mainBody">
 		<tr>
@@ -24,18 +24,19 @@
 			</td>
 			<td>
 				<div id="optionsPanel">
-					<button onclick="generateBall();">Generate One Particle</button> <br/>
-					<button onclick="generateBalls(50);">Generate 50 Particles</button> <br/>
 					<button onclick="start();">Start</button>
 					<button onclick="stop();">Stop</button> <br/>
-					<input id="energy" type="text"></input>
+					<div id="settingsHeader">Particle Creator</div> <br/>
+					<button onclick="generateBall();">Generate One Particle</button> <br/>
+					<button onclick="generateBalls(50);">Generate 50 Particles</button> <br/>					
+					Total KE: <input id="energy" type="text"></input>
 				</div>
 			</td>
 		<tr>
 	</table>
 	<div id="footer">
 		Click <a href="http://wpi.edu/~mdpennington/index.html">here</a> to go home! <br/>
-		Copyright &copy; 2014 Michael Pennington and William Harrington
+		<i>Copyright &copy; 2014 Michael Pennington and William Harrington</i>
 	</div>
 </body>
 </html>

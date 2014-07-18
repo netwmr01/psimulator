@@ -5,15 +5,15 @@ var running = false; // simulation not running yet
 var repeater = null; // Holds the interval object.
 var step = 1; //redraws per clock tick (basically)
 var pq = null;  //priority queue variable
-var eq = null;
 var qCreated = false; // has the priority queue been created?
 var t = 0; //total time
 var debug=true;
+var logflag=false;
 var myVar=0;
 var event1, event2, event3; //events to go into the pq (evt1: balltoball collision, evt2+3 balltowall collision
 function start() {
 
-    console.log('entering function start()');
+    debuglog('entering function start()');
           
 	if(!running) {
 		running = true;
@@ -21,7 +21,7 @@ function start() {
 			pq = new goog.structs.PriorityQueue();
 			qCreated = true;
 		}
-        console.log('about to call mainLoop');
+        debuglog('about to call mainLoop');
 
 		myVar=setInterval(function(){mainLoop();},20);
 	}
@@ -30,29 +30,29 @@ function start() {
 
 function mainLoop() { //simulation
       
-     console.log('start of mainLoop()');
+     debuglog('start of mainLoop()');
      
 
 	 
      
         do {
-        console.log('in while loop');
+        debuglog('in while loop');
 		
         
 		var e = pq.peek();
-        console.log("event valid? "+e.isValid());
+        debuglog("event valid? "+e.isValid());
           
 		if (!e.isValid()) { pq.dequeue();continue;}
 		var a = e.a;
 		var b = e.b;
 
-        console.log("balls.length "+balls.length);
+        debuglog("balls.length "+balls.length);
 		
 		
 		var dt = e.time -t;
-        console.log("event time: "+e.time);
-        console.log("number of redraw: "+dt);
-        console.log("step is: "+step);
+        debuglog("event time: "+e.time);
+        debuglog("number of redraw: "+dt);
+        debuglog("step is: "+step);
 
         //move all the points and redraw them if there are more than one step from now till event
         if (Math.floor(dt) > step)
@@ -69,20 +69,20 @@ function mainLoop() { //simulation
             redraw();
             pq.dequeue;  //actually remove the event, as we handled it already
 		    t = e.time;  //move to actual event time
-            if	(a != null && b != null) {console.log("collided");console.log(a); console.log(b);a.collide(b);}
+            if	(a != null && b != null) {debuglog("collided");debuglog(a); debuglog(b);a.collide(b);}
 		    else if (a != null && b == null) a.collideWithVerticalWall();
 		    else if (a == null && b != null) b.collideWithHorizontalWall();
 
 		    predict(a);
 		    predict(b);
-            console.log(pq);
-            console.log(pq.getCount());
+            debuglog(pq);
+            debuglog(pq.getCount());
                 
 		    document.getElementById("energy").value = calculateEnergy();
         
         }
 		
-        console.log(e);
+        debuglog(e);
 		
         
 		
@@ -98,7 +98,7 @@ function generateBall() {
 		qCreated = true;
 	}
 	predict(balls[i]);
-    console.log("Ball #" + i + " created.");
+    debuglog("Ball #" + i + " created.");
 	i++;
 }
 
@@ -107,7 +107,9 @@ function generateBalls(amount) {
 		pq = new goog.structs.PriorityQueue();
 		qCreated = true;
 	}
-	for(i;i<amount;i++) {
+
+    var newI = i + amount; // Updated number of balls.
+	for(i;i<newI;i++) {
 		balls[i] = new Ball();
 		balls[i].drawIt();
 	}
@@ -132,8 +134,8 @@ function predictAll() {
 
 function predict(a) {
     
-        console.log("predicting");
-        console.log("before adding new event to pq size: "+pq.getCount());
+        debuglog("predicting");
+        debuglog("before adding new event to pq size: "+pq.getCount());
 	if (a==null) return;
 	for(j=0;j<balls.length;j++) {
                 if(balls[j]!=a) 
@@ -146,7 +148,7 @@ function predict(a) {
 	event2 = new Event(a.timeToHitHorizontalWall()+t, null, a);
 	if (event1.time != Number.POSITIVE_INFINITY) pq.enqueue(event1.time, event1);
 	if (event2.time != Number.POSITIVE_INFINITY) pq.enqueue(event2.time, event2);
-        console.log("after adding new event to pq size: "+pq.getCount());
+        debuglog("after adding new event to pq size: "+pq.getCount());
 }
 
 function stop() {
@@ -182,14 +184,30 @@ function Event(time, a, b) {
 	};
 }
 
+function debuglog(object)
+{
+    if(logflag==true) console.log(object);
+}
+
 function moveAll(dt)
 {
-     for(var index in balls) { console.log(balls[index]);balls[index].moveIt(dt); }
+     for(var index in balls) { debuglog(balls[index]);balls[index].moveIt(dt); }
 }
 function calculateEnergy() {
 	var energy = 0;
+    var t1;
+    var t2;
+    var t3; // Temporary variables
+    var j;
+
 	for(j=0;j<i;j++) {
-		energy += 0.5 * balls[j].mass * (Math.pow(balls[j].vx, 2) + Math.pow(balls[j].vy, 2));
+		//energy += 0.5 * balls[j].mass * (Math.pow(balls[j].vx, 2) + Math.pow(balls[j].vy, 2));
+
+        t1 = balls[j].vx * balls[j].vx;
+        t2 = balls[j].vy * balls[j].vy;
+        t3 = 0.5 * balls[j].mass * (t1 + t2);
+        debuglog("ball #" + j + ": energy = " + t3);
+        energy += t3;
 	}
 	return energy;
 }
