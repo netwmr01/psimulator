@@ -21,9 +21,9 @@
 			</td>
 			<td>
 				<div id="optionsPanel">
-					<button onClick="start();">Generate One Particle</button> <br/>
+					<button onClick="generateBall();">Generate One Particle</button> <br/>
 					<button onClick="generateBalls(50);">Generate 50 Particles</button> <br/>
-					<button onClick="reStart();">Start</button>
+					<button onClick="start();">Start</button>
 					<button onClick="stop();">Stop</button> <br/>
 					<input id="energy" type="text"></input>
 				</div>
