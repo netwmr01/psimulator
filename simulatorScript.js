@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 /*Copyright (c) 2014, Michael Pennington, William Harrington
 All rights reserved.
 
@@ -24,6 +25,9 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.*/
 
 goog.require('goog.structs.PriorityQueue'); //import google priority queue
 var balls = []; //array of balls
+=======
+var balls = [];
+>>>>>>> master
 var i = 0; //number of balls
 var running = false; // simulation not running yet
 var repeater = null; // Holds the interval object.
@@ -36,10 +40,18 @@ var logflag=false;
 var myVar=0;
 var event1, event2, event3; //events to go into the pq (evt1: balltoball collision, evt2+3 balltowall collision
 function start() {
+<<<<<<< HEAD
 
     debuglog('entering function start()');
           
 	if(!running) {
+=======
+	balls[i] = new Ball();
+    // Note: ball number counts from 0. i.e., first ball created is #0.
+	balls[i].drawIt();
+	if(!running){
+		setInterval(function(){stepForward()}, (50/3));
+>>>>>>> master
 		running = true;
 		if(!qCreated) { 
 			pq = new goog.structs.PriorityQueue();
@@ -50,6 +62,7 @@ function start() {
 		myVar=setInterval(function(){mainLoop();},20);
 	}
 }
+<<<<<<< HEAD
 
 
 function mainLoop() { //simulation
@@ -111,6 +124,14 @@ function mainLoop() { //simulation
         
 		
 	} while (!pq.isEmpty() && running && !debug)
+=======
+function stepForward(){
+	ctx.clearRect(0,0,750,750);
+	for(j=0;j<i;j++) {
+		balls[j].moveIt();
+		balls[j].drawIt();
+	}
+>>>>>>> master
 }
 
 function generateBall() {
