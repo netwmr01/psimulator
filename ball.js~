@@ -128,6 +128,6 @@ function Ball(px, py, vx, vy, radius, mass, color) {
                     console.log("time to Hit = NaN");
                     returnValue=Number.POSITIVE_INFINITY;
                 }
-		return -(dvdp + Math.sqrt(d)) / dvdv;
+		return returnValue;
 	};
 }

@@ -22,7 +22,7 @@ function start() {
 		}
         console.log('about to call mainLoop');
    
-		myVar=setInterval(function(){mainLoop();},100);
+		myVar=setInterval(function(){mainLoop();},10);
 	}
 }
 
@@ -65,7 +65,7 @@ function mainLoop() { //simulation
 		t = e.time;
 		
         
-		if	(a != null && b != null) {a.collide(b);console.log("collided");console.log(a); console.log(b);}
+		if	(a != null && b != null) {console.log("collided");console.log(a); console.log(b);a.collide(b);}
 		else if (a != null && b == null) a.collideWithVerticalWall();
 		else if (a == null && b != null) b.collideWithHorizontalWall();
 
@@ -152,8 +152,6 @@ function redraw() {
 
 	setTimeout(function() {}, 10);
 }
-
-
 
 function Event(time, a, b) {
 	this.time = time;

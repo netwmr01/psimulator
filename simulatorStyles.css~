@@ -10,7 +10,6 @@ body {
 	text-align:center;	
 	color:white;
 	font-family:Impact;
-	letter-spacing:3px;
 }
 #simWindow {
 	width:752px;

@@ -22,7 +22,7 @@ function start() {
 		}
         console.log('about to call mainLoop');
    
-		myVar=setInterval(function(){mainLoop();},100);
+		myVar=setInterval(function(){mainLoop();},20);
 	}
 }
 
@@ -152,8 +152,6 @@ function redraw() {
 
 	setTimeout(function() {}, 10);
 }
-
-
 
 function Event(time, a, b) {
 	this.time = time;
