@@ -5,6 +5,7 @@ var running = false; // simulation not running yet
 var repeater = null; // Holds the interval object.
 var step = 1; //redraws per clock tick (basically)
 var pq = null;  //priority queue variable
+var eq = null;
 var qCreated = false; // has the priority queue been created?
 var t = 0; //total time
 var debug=true;
@@ -21,8 +22,8 @@ function start() {
 			qCreated = true;
 		}
         console.log('about to call mainLoop');
-   
-		myVar=setInterval(function(){mainLoop();},10);
+
+		myVar=setInterval(function(){mainLoop();},20);
 	}
 }
 
@@ -38,10 +39,10 @@ function mainLoop() { //simulation
         console.log('in while loop');
 		
         
-		var e = pq.dequeue();
+		var e = pq.peek();
         console.log("event valid? "+e.isValid());
           
-		if (!e.isValid()) continue;
+		if (!e.isValid()) { pq.dequeue();continue;}
 		var a = e.a;
 		var b = e.b;
 
@@ -52,29 +53,39 @@ function mainLoop() { //simulation
         console.log("event time: "+e.time);
         console.log("number of redraw: "+dt);
         console.log("step is: "+step);
-	/*	for(j=0;j<Math.floor(redrawcounter);j=j+step)
-		{
-            console.log("Redraw loop, this is J: "+j);
-            moveAll(step);
-			setTimeout(function() {redraw();}, 10);
-		}
-		moveAll(redrawcounter-Math.floor(redrawcounter));
-        console.log(e);*/
-                moveAll(dt);
-                redraw();
-		t = e.time;
+
+        //move all the points and redraw them if there are more than one step from now till event
+        if (Math.floor(dt) > step)
+        {
+            t=t+step; //move time forward by step
+            moveAll(step); //move points
+            redraw();      //redraw
+ 
+        }
+        //no need to step, handle the actual event
+        else 
+        {
+            moveAll(dt);
+            redraw();
+            pq.dequeue;  //actually remove the event, as we handled it already
+		    t = e.time;  //move to actual event time
+            if	(a != null && b != null) {console.log("collided");console.log(a); console.log(b);a.collide(b);}
+		    else if (a != null && b == null) a.collideWithVerticalWall();
+		    else if (a == null && b != null) b.collideWithHorizontalWall();
+
+		    predict(a);
+		    predict(b);
+            console.log(pq);
+            console.log(pq.getCount());
+                
+		    document.getElementById("energy").value = calculateEnergy();
+        
+        }
+		
+        console.log(e);
 		
         
-		if	(a != null && b != null) {console.log("collided");console.log(a); console.log(b);a.collide(b);}
-		else if (a != null && b == null) a.collideWithVerticalWall();
-		else if (a == null && b != null) b.collideWithHorizontalWall();
-
-		predict(a);
-		predict(b);
-                console.log(pq);
-                console.log(pq.getCount());
-                
-		document.getElementById("energy").value = calculateEnergy();
+		
 	} while (!pq.isEmpty() && running && !debug)
 }
 
